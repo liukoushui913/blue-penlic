@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="demo1" style="width: 600px; height: 400px;"></div>
+    <div id="demo2" style="width: 600px; height: 400px;"></div>
+    <div id="demo3" style="width: 600px; height: 400px;"></div>
+    <div id="demo4" style="width: 600px; height: 400px;"></div>
+    <button id="ys">亚索</button>
+    <button id="hn">火男</button>
+    <button id="ls">老鼠</button>
+    <script src="./echarts.js"></script>
+    <script>
+        var option = {
+            title: {
+                text: 'ECharts 入门示例',
+            },
+            tooltip: {},
+            legend: {
+                data: ['销量']
+            },
+            xAxis: {
+                data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: '销量',
+                    type: 'bar',
+                    data: [5, 20, 36, 10, 10, 20]
+                }
+            ]
+        };
+
+        // 第四步 ：基于准备好的dom 初始化echarts
+        var demo1 = echarts.init(document.getElementById("demo1"))
+        demo1.setOption(option)
+
+        var demo2 = echarts.init(document.getElementById("demo2"))
+        var option2 = {
+            title: {
+                text: '饼状图',
+            },
+            legend: {
+                data: ['销量']
+            },
+            // color: ["red", "green", "black", "yellow", "pink", "purple",],
+            tooltip: {
+                data: ["销量"]
+            },
+            // 类目
+            series: [
+                {
+                    name: '销量',
+                    type: 'pie',
+                    data: [
+                        {
+                            name: "衬衫", value: 5
+                        },
+                        {
+                            name: "羊毛衫", value: 20
+                        },
+                        {
+                            name: "雪纺衫", value: 36
+                        },
+                        {
+                            name: "裤子", value: 10
+                        },
+                        {
+                            name: "高跟鞋", value: 10
+                        },
+                        {
+                            name: "袜子", value: 20
+                        },
+                    ],
+                    // 
+                    colorBy: "data",
+                    label: {
+                        // 是否显示视觉引导线
+                        show: true,
+                        formatter: '名称：{b} 数值：{c}'
+
+                    },
+                    rich: {
+                        x: {
+                            color: "red",
+                            lineHeight: 10
+                        },
+                        y: {
+                            color: "blue",
+                            lineHeight: 20
+                        },
+                    }
+                }
+            ]
+        };
+        demo2.setOption(option2)
+
+
+        var demo3 = echarts.init(document.getElementById("demo3"))
+        var option3 = {
+            title: {
+                text: '销量',
+                subtext: '月份'
+            },
+            legend: {
+                data: ['销量', '利润']
+            },
+            xAxis: {
+                data: ['壹月', '贰月', '叁月', '肆月', '伍月', '陆月', '柒月', '捌月', '玖月', '拾月', '拾壹月', '拾贰月'],
+                name: '月份',
+                // 设置坐标轴 留白策略
+                boundaryGap: true,
+                // 坐标轴 刻度标签的相关设置
+                axisLabel: {
+                    inside: false,
+                    rotate: 45
+                },
+            },
+            yAxis: {
+                axisLabel: {
+                    show: true,
+                    formatter: function (value) {
+                        if (value >= 600) {
+                            return '最高' + value + '万'
+                        } else {
+                            return value + '万'
+                        }
+                    }
+                }
+            },
+            // 视觉映射组件
+            visualMap: [
+                {
+                    // continuous:类型为连续性
+                    // piecewise:类型为分段型
+                    type: 'piecewise',
+                    pieces: [
+                        {
+                            lte: 100, color: 'yellow', label: '极美'
+                        },
+                        {
+                            gt: 100, lte: 400, color: 'green', label: '中等'
+                        },
+                        {
+                            gt: 400, color: 'cyan', label: '美'
+                        }
+                    ],
+                    right: 0,
+                    top: 0
+                }
+            ],
+            series: [
+                {
+                    name: '销量',
+                    type: 'line',
+                    data: [54, 54, 78, 78, 45, 15, 49, 78, 7, 45, 15, 450],
+                    areaStyle: {},
+                    // 是否平滑曲线显示
+                    smooth: true,
+                    // 图表标域
+                    markArea: {
+                        data: [
+                            [
+                                { name: '销售旺季', xAxis: '柒月', itemStyle: { color: 'pink' } },
+                                { name: '销售旺季', xAxis: '玖月' },
+                            ],
+                            [
+                                { name: '销售淡季', xAxis: '贰月', itemStyle: { color: 'lightgray' } },
+                                { name: '销售淡季', xAxis: '肆月' },
+                            ]
+                        ]
+                    }
+                },
+                {
+                    name: '利润',
+                    type: 'bar',
+                    data: [540, 504, 708, 708, 405, 105, 409, 708, 70, 450, 150, 450]
+                }
+            ]
+        }
+        demo3.setOption(option3)
+
+
+        var demo4 = echarts.init(document.getElementById("demo4"))
+        var option4 = {
+            title: {
+                text: '英雄联盟'
+            },
+            // 每个 series 中的 colorBy 默认是以 series 类目来去颜色的 但是饼状图不可能颜色一样 ,所以是以data来取颜色 而 data 有四个值 所以这里我们加了一个颜色 
+            color: ['gold', 'red', 'green', 'yellow'],
+            legend: {
+                data: ['亚索', '火男', '老鼠'],
+                selectedMode: 'single'
+            },
+            xAxis: {
+                data: ['攻击', '法术', '防御', '上手难度']
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: '亚索',
+                    type: 'bar',
+                    data: [8, 4, 4, 10]
+                },
+                {
+                    name: '火男',
+                    type: 'line',
+                    data: [2, 9, 2, 4]
+                },
+                {
+                    name: '老鼠',
+                    type: 'pie',
+                    data: [9, 3, 2, 6]
+                }
+            ]
+        }
+        demo4.setOption(option4)
+        // 事件
+        // 点击图标的每一项
+        demo4.on('click', function (params) {
+            console.log(params);
+        });
+        // 切换图例
+        demo4.on('legendselectchanged', function (params) {
+            console.log(params);
+        });
+        //  触发修改图例的方法 
+        ys.onclick = function () {
+            demo4.dispatchAction({
+                type: 'legendSelect',
+                name: '亚索'
+            })
+        }
+        hn.onclick = function () {
+            demo4.dispatchAction({
+                type: 'legendSelect',
+                name: '火男'
+            })
+        }
+        ls.onclick = function () {
+            demo4.dispatchAction({
+                type: 'legendSelect',
+                name: '老鼠'
+            })
+        }
+    </script>
+</body>
+
+</html>

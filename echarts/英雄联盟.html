@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英雄联盟</title>
+    <style>
+        #box {
+            width: 1000px;
+            border: 1px solid black;
+            margin: 100px auto;
+            display: flex;
+            background-size: 100% 100%;
+            overflow: hidden;
+        }
+
+        .roleBox {
+            width: 200px;
+            height: 500px;
+            border: 1px solid green;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .roleBox .item {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+        }
+
+        .attributeBox {
+            width: 800px;
+            height: 500px;
+        }
+
+        .attributeBox .topBox {
+            width: 100%;
+            height: 300px;
+        }
+
+        .topBox {
+            display: flex;
+        }
+
+        #demo {
+            width: 300px;
+            height: 300px;
+        }
+
+        #introduce {
+            width: 500px;
+            height: 300px;
+            text-align: center;
+            color: white;
+        }
+
+        #skill {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            height: 70px;
+        }
+
+        .skillText {
+            width: 100%;
+            height: 130px;
+            background-color: rgba(0, 0, 0, .7);
+            text-align: center;
+            color: white;
+            overflow-y: scroll;
+        }
+
+        #skill p {
+            width: 40px;
+            height: 40px;
+            padding: 15px 15px;
+            margin: 0;
+        }
+
+        #skill p:hover {
+            opacity: .6;
+        }
+
+        #skill p img {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+        <!-- 英雄 -->
+        <div class="roleBox"></div>
+        <!-- 英雄属性 -->
+        <div class="attributeBox">
+            <!-- top -->
+            <div class="topBox">
+                <!-- 雷达 -->
+                <div id="demo">
+
+                </div>
+                <!-- 英雄介绍 -->
+                <div id="introduce"></div>
+            </div>
+            <!-- bottom -->
+            <div class="bottomBox">
+                <!-- 英雄技能 -->
+                <div id="skill"></div>
+                <div class="skillText"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./jquery-3.5.1.js "></script>
+<script src="./homework.js"></script>
+<script src="./echarts.js"></script>
+
+<script>
+    let name = [];
+    data.forEach((item, index) => {
+        let $img = $(`<img  src=${item.img_url} alt=''>`)
+        let $div = $(`<div id="ls" data-index="${index}" data-name="${item.name}" class="item" ></div>`).append($img)
+        $(".roleBox").append($div);
+        name.push(item.name)
+    });
+    var demo = echarts.init(document.getElementById("demo"))
+    option = {
+        legend: {
+            data: data.map(item => (item.name)),
+            selectedMode: 'single',
+            bottom: 0
+        },
+        radar: {
+            indicator: [
+                { name: '攻击', max: 10, color: 'red' },
+                { name: '法术', max: 10, color: '#D8C189' },
+                { name: '防御', max: 10, color: '#D8C189' },
+                { name: '上手难度', max: 10, color: 'green' },
+            ],
+            shape: 'circle',
+            radius: '40%',
+            startAngle: 90,
+            axisLine: {
+                lineStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0,
+                        y: 0,
+                        x2: 1,
+                        y2: 1,
+                        colorStops: [
+                            { offset: 0, color: 'red' },
+                            { offset: .5, color: 'green' },
+                            { offset: 1, color: 'blue' }
+                        ],
+                    },
+                    width: 8,
+                }
+            }
+        },
+        series: data.map(item => {
+            let data1 = {
+                name: item.name,
+                type: 'radar',
+                data: function () {
+                    let value = [];
+                    for (i in item.trait) {
+                        value.push(item.trait[i])
+                    }
+                    return [{ value: value, name: item.name }]
+                }(),
+                areaStyle: { color: "rgba(242, 236, 73, 0.58)" },
+                lineStyle: { color: 'rgba(248, 248, 88, 1)' },
+                symbol: "none"
+            };
+            return data1
+        })
+    };
+    demo.setOption(option)
+    var index = 0;
+    // 改变背景图
+    $("#box").css({
+        "backgroundImage": `url(${data[index].big_img_url})`
+    })
+
+    $h2 = $(`<h2>${data[index].name}</h2>`)
+    $div = $(`<div>${data[index].des}</div>`)
+    $("#introduce").append($h2).append($div)
+    $h2 = $(`<h2>${data[index].skill[0].title}</h2>`)
+    $div = $(`<div>${data[index].skill[0].s_des}</div>`)
+    $(".skillText").append($h2).append($div)
+    data[index].skill.forEach((item, index) => {
+        $p = $(`<p data-index="${index}" class="one"><img src="${item.img_url}" alt="" /></p>`)
+        $("#skill").append($p)
+    });
+    $(".roleBox").on('click', '.item', function (e) {
+        demo.dispatchAction({
+            type: 'legendSelect',
+            name: e.currentTarget.dataset.name
+        })
+        index = e.currentTarget.dataset.index
+        $("#box").css({
+            "backgroundImage": `url(${data[index].big_img_url})`
+        })
+        $("#introduce").children().remove()
+        $("#skill").children().remove()
+        $(".skillText").children().remove()
+
+        $h2 = $(`<h2>${data[index].name}</h2>`)
+        $div = $(`<div>${data[index].des}</div>`)
+        $("#introduce").append($h2).append($div)
+        data[index].skill.forEach((item, index) => {
+            console.log(index);
+            $p = $(`<p data-index="${index}" class="one"><img src="${item.img_url}" alt="" /></p>`)
+            $("#skill").append($p)
+        });
+        $h2 = $(`<h2>${data[index].skill[0].title}</h2>`)
+        $div = $(`<div>${data[index].skill[0].s_des}</div>`)
+        $(".skillText").append($h2).append($div)
+    })
+    $("#skill").on('click', '.one', function (e) {
+        $(".skillText").children().remove()
+        console.log(e.currentTarget.dataset.index);
+        $h2 = $(`<h2>${data[index].skill[e.currentTarget.dataset.index].title}</h2>`)
+        $div = $(`<div>${data[index].skill[e.currentTarget.dataset.index].s_des}</div>`)
+        $(".skillText").append($h2).append($div)
+    })
+
+        demo.on('legendselectchanged', function (params) {
+            console.log(params.name); 
+            console.log(data);
+            for(var i = 0; i < data.length; i++){
+                if (params.name == data[i].name){
+                    console.log(1);
+                    $("#introduce").children().remove()
+                    $("#skill").children().remove()
+                    $(".skillText").children().remove()
+                    $("#box").css({
+                        "backgroundImage": `url(${data[i].big_img_url})`
+                    })
+                    $h2 = $(`<h2>${data[i].name}</h2>`)
+                    $div = $(`<div>${data[i].des}</div>`)
+                    $("#introduce").append($h2).append($div)
+                    $h2 = $(`<h2>${data[i].skill[0].title}</h2>`)
+                    $div = $(`<div>${data[i].skill[0].s_des}</div>`)
+                    $(".skillText").append($h2).append($div)
+                    data[i].skill.forEach((item, index) => {
+                        $p = $(`<p data-index="${index}" class="one"><img src="${item.img_url}" alt="" /></p>`)
+                        $("#skill").append($p)
+                    });
+                    index = i
+
+                }
+            }
+            demo.dispatchAction({
+                type: 'legendSelect',
+                name: params.name
+            })
+
+
+            
+    });
+
+   
+</script>
+
+</html>
